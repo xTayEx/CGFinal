@@ -1,0 +1,24 @@
+newmtl m0
+map_Kd grass_top.png
+Ka 1 1 1
+Kd 0 0 0
+Ks 0.3372549 0.5176471 0.2156863
+Ns 5
+d 1
+
+newmtl m1
+map_Kd dirt.png
+Ka 1 1 1
+Kd 0 0 0
+Ks 0.3372549 0.5176471 0.2156863
+Ns 5
+d 1
+
+newmtl m2
+map_Kd grass_side.png
+Ka 1 1 1
+Kd 0 0 0
+Ks 0.3372549 0.5176471 0.2156863
+Ns 5
+d 1
+

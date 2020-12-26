@@ -1,0 +1,8 @@
+# Made in Blockbench 3.7.4
+newmtl m_0
+map_Kd dirt.png 
+newmtl m_1
+map_Kd grass_side.png 
+newmtl m_2
+map_Kd grass_top.png 
+newmtl none

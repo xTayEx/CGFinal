@@ -1,0 +1,10 @@
+# Made in Blockbench 3.7.4
+newmtl m_0
+map_Kd bodyFront.png 
+newmtl m_1
+map_Kd bodyLeft.png 
+newmtl m_2
+map_Kd bodyRight.png 
+newmtl m_3
+map_Kd bodyTop.png 
+newmtl none
