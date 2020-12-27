@@ -123,9 +123,8 @@ namespace Kapsule {
         shadowShader.setMat4("viewMatrix", shadowViewMatrix);
         shadowShader.setMat4("modelMatrix", modelMatrix);
         shadowShader.setMat4("projMatrix", ProjMatrix);
-        shadowShader.setVec3("fColor", glm::vec3(0.0f, 0.0f, 0.0f));
+        shadowShader.setVec4("fColor", 0.0f, 0.0f, 0.0f, 1.0f);
         vao.bind();
-        //DEBUGX(vao.id)
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         vao.unbind();
     }
