@@ -3,6 +3,7 @@
 #define __MODEL_H__
 
 #include <string>
+#include <unordered_map>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -67,15 +68,19 @@ namespace Kapsule {
                         glm::mat4 shadowModelMatrix);
 	private:
 		vector<Mesh> meshes;
+		vector<Texture> loadedTextures;
 		string directory;
 		void loadModel(string const& path);
 		void processNode(aiNode* node, const aiScene* scene);
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene);
+		unordered_map<string, int> textureMap;
 		vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, string typeName);
 	};
 
 	Model::Model(char* path)
 	{
+		loadedTextures.clear();
+		textureMap.clear();
 		loadModel(path);
 	}
 
@@ -104,12 +109,19 @@ namespace Kapsule {
 			//DEBUG
 			aiString str;
 			mat->GetTexture(type, i ,&str);
-			bool skip = false;
-
 			Texture texture;
-			texture.textureID = TextureFromFile(str.C_Str(), this->directory);
-			texture.type = typeName;
-			texture.path = str.C_Str();
+			if (textureMap.count(str.C_Str())) {
+				//cerr << "[INFO] Texture has been loaded before. Texture is "; 
+				//cerr << str.C_Str() << "\n";
+				texture = loadedTextures[textureMap[str.C_Str()]];
+			} else {
+				//cerr << "[INFO] Now loading texture is " << str.C_Str() << "\n";
+				texture.textureID = TextureFromFile(str.C_Str(), this->directory);
+				texture.type = typeName;
+				texture.path = str.C_Str();
+				textureMap[texture.path] = loadedTextures.size();
+				loadedTextures.push_back(texture);
+			}
 			textures.push_back(texture);
 		}
 		return textures;

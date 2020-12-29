@@ -36,7 +36,7 @@ int frameCnt = 0;
 float bodyRotationAngle = 0.0f;
 float armRotationAngle = 0.0f;
 float movement = 0.0f; 
-glm::vec3 lightPos(1.0f, 3.0f, 1.0f);
+glm::vec3 lightPos(1.0f, 3.0f, -1.0f);
 
 bool mouseFirst = true;
 bool cameraCanMove = true;
@@ -121,8 +121,8 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
 {
     Model* plane = models[0];
     Model* grassBlock = models[1];
-    Model* bunny = models[2];
-    Model* monkey = models[3];
+    Model* ball = models[2];
+    Model* woodenBox = models[3];
 
     LayerModel* body = layerModels[0];
     LayerModel* head = layerModels[1];
@@ -136,7 +136,7 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     shadowShader->use();
 
     glm::mat4 blockModel(1.0f);
-    blockModel = glm::translate(blockModel, glm::vec3(-2.0f, 1.0f, 0.0f));
+    blockModel = glm::translate(blockModel, glm::vec3(-2.0f, 0.3f, 0.0f));
     blockModel = glm::scale(blockModel, glm::vec3(20.0f, 20.0f, 20.0f));
     shadowShader->setMat4("model", blockModel);
     grassBlock->draw(*shadowShader);
@@ -144,7 +144,7 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     for (int i = -5; i < 5; i++) {
         for (int j = -5; j < 5; j++) {
             glm::mat4 model(1.0f);
-            model = glm::translate(model, glm::vec3(i * 2.0f, -0.5f, j * 2.0f));
+            model = glm::translate(model, glm::vec3(i * 2.0f, -0.4f, j * 2.0f));
             model = glm::scale(model, glm::vec3(16.0f, 16.0f, 16.0f));
             shadowShader->setMat4("model", model);
             plane->draw(*shadowShader);
@@ -162,30 +162,30 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     leftLowerArm->setRotationMatrix(armRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     body->draw(*shadowShader);
 
-    glm::mat4 bunnyModel(1.0f);
-    bunnyModel = glm::translate(bunnyModel, glm::vec3(2.0f, 0.3f, 2.0f));
-    bunnyModel = glm::scale(bunnyModel, glm::vec3(0.3f, 0.3f, 0.3f));
-    shadowShader->setMat4("model", bunnyModel);
-    bunny->draw(*shadowShader);
+    glm::mat4 ballModel(1.0f);
+    ballModel = glm::translate(ballModel, glm::vec3(2.0f, 0.3f, 2.0f));
+    ballModel = glm::scale(ballModel, glm::vec3(0.3f, 0.3f, 0.3f));
+    shadowShader->setMat4("model", ballModel);
+    ball->draw(*shadowShader);
 
-    glm::mat4 monkeyModel(1.0f);
-    monkeyModel = glm::translate(monkeyModel, glm::vec3(2.0f, 0.3f, 4.0f));
-    monkeyModel = glm::scale(monkeyModel, glm::vec3(0.3f, 0.3f, 0.3f));
-    shadowShader->setMat4("model", monkeyModel);
-    monkey->draw(*shadowShader);
+    glm::mat4 boxModel(1.0f);
+    boxModel = glm::translate(boxModel, glm::vec3(2.0f, 0.0f, 4.0f));
+    boxModel = glm::scale(boxModel, glm::vec3(1.0f, 1.0f, 1.0f));
+    shadowShader->setMat4("model", boxModel);
+    woodenBox->draw(*shadowShader);
 }
 
 void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<Shader*> shaders)
 {
     Shader* envShader = shaders[0];
     Shader* robotShader = shaders[1];
-    Shader* bunnyShader = shaders[2];
-    //Shader* shadowShader = shaders[2];
+    Shader* ballShader = shaders[2];
+    Shader* boxShader = shaders[3];
 
     Model* plane = models[0];
     Model* grassBlock = models[1];
-    Model* bunny = models[2];
-    Model* monkey = models[3];
+    Model* ball = models[2];
+    Model* woodenBox = models[3];
 
     LayerModel* body = layerModels[0];
     LayerModel* head = layerModels[1];
@@ -219,7 +219,7 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
     for (int i = -5; i < 5; i++) {
         for (int j = -5; j < 5; j++) {
             glm::mat4 model(1.0f);
-            model = glm::translate(model, glm::vec3(i * 2.0f, -0.5f, j * 2.0f));
+            model = glm::translate(model, glm::vec3(i * 2.0f, -0.4f, j * 2.0f));
             model = glm::scale(model, glm::vec3(16.0f, 16.0f, 16.0f));
             envShader->setMat4("model", model);
             plane->draw(*envShader);
@@ -252,31 +252,34 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
 
     // draw grass block
     glm::mat4 blockModel(1.0f);
-    blockModel = glm::translate(blockModel, glm::vec3(-2.0f, 1.0f, 0.0f));
+    blockModel = glm::translate(blockModel, glm::vec3(-2.0f, 0.3f, 0.0f));
     blockModel = glm::scale(blockModel, glm::vec3(20.0f, 20.0f, 20.0f));
     robotShader->setMat4("model", blockModel);
     grassBlock->draw(*robotShader);
 
-    bunnyShader->use();
-    bunnyShader->setInt("reflectSwitch", 0);
-    glm::mat4 bunnyModel(1.0f);
-    bunnyModel = glm::translate(bunnyModel, glm::vec3(2.0f, 0.3f, 2.0f));
-    bunnyModel = glm::scale(bunnyModel, glm::vec3(0.3f, 0.3f, 0.3f));
-    bunnyShader->setMat4("model", bunnyModel);
-    bunnyShader->setMat4("projection", projection);
-    bunnyShader->setMat4("view", view);
-    bunnyShader->setVec3("viewPos", camera.eye);
-    bunnyShader->setVec3("lightPos", lightPos);
-    bunny->draw(*bunnyShader);
+    ballShader->use();
+    ballShader->setInt("reflectSwitch", 1);
+    glm::mat4 ballModel(1.0f);
+    ballModel = glm::translate(ballModel, glm::vec3(2.0f, 0.3f, 2.0f));
+    ballModel = glm::scale(ballModel, glm::vec3(0.3f, 0.3f, 0.3f));
+    ballShader->setMat4("model", ballModel);
+    ballShader->setMat4("projection", projection);
+    ballShader->setMat4("view", view);
+    ballShader->setVec3("viewPos", camera.eye);
+    ballShader->setVec3("lightPos", lightPos);
+    ball->draw(*ballShader);
 
-    glm::mat4 monkeyModel(1.0f);
-    bunnyShader->setInt("reflectSwitch", 1);
-    monkeyModel = glm::translate(monkeyModel, glm::vec3(2.0f, 0.3f, 4.0f));
-    monkeyModel = glm::scale(monkeyModel, glm::vec3(0.3f, 0.3f, 0.3f));
-    bunnyShader->setMat4("model", monkeyModel);
-    monkey->draw(*bunnyShader);
+    glm::mat4 boxModel(1.0f);
+    boxModel = glm::translate(boxModel, glm::vec3(2.0f, 0.0f, 4.0f));
+    boxModel = glm::scale(boxModel, glm::vec3(1.0f, 1.0f, 1.0f));
+    boxShader->use();
+    boxShader->setMat4("projection", projection);
+    boxShader->setMat4("view", view);
+    boxShader->setMat4("model", boxModel);
+    boxShader->setVec3("lightPos", lightPos);
+    boxShader->setVec3("viewPos", camera.eye);
+    woodenBox->draw(*boxShader);
 
-    
     //shadowShader->use();
     //body->drawShadow(*shadowShader, lightPos, view, projection, glm::mat4(1.0f));
     //	 export video
@@ -320,12 +323,13 @@ int main(int argc, char** argv)
     Shader depthShader("shader/depth_vshader.glsl", "shader/depth_fshader.glsl");
     Shader debugShader("shader/debug_vshader.glsl", "shader/debug_fshader.glsl");
     Shader skyboxShader("shader/skybox_vshader.glsl", "shader/skybox_fshader.glsl");
-    Shader bunnyShader("shader/bunny_vshader.glsl", "shader/bunny_fshader.glsl");
+    Shader ballShader("shader/ball_vshader.glsl", "shader/ball_fshader.glsl");
+    Shader boxShader("shader/wooden_box_vshader.glsl", "shader/wooden_box_fshader.glsl");
 
     Model plane((char*)"model/Plane/Plane.obj");
     Model grassBlock((char*)"model/dirt/grassBlock.obj");
     Model ball((char*)"model/ball/Ball.obj");
-    Model monkey((char*)"model/monkey/Monkey.obj");
+    Model woodenBox((char*)"model/woodenBox/Wooden_stuff.obj");
     LayerModel body = LayerModel();
     body.setNodeModel(Model((char*)"model/man/Body/Body.obj"))
         .setPositionMatrix(glm::vec3(0.0f, 0.7f, 0.0f))
@@ -403,12 +407,13 @@ int main(int argc, char** argv)
     Models.push_back(&plane);
     Models.push_back(&grassBlock);
     Models.push_back(&ball);
-    Models.push_back(&monkey);
+    Models.push_back(&woodenBox);
 
     vector<Shader*> Shaders;
     Shaders.emplace_back(&envShader);
     Shaders.emplace_back(&robotShader);
-    Shaders.emplace_back(&bunnyShader);
+    Shaders.emplace_back(&ballShader);
+    Shaders.emplace_back(&boxShader);
     //Shaders.emplace_back(&shadowShader);
 
     envShader.use();
@@ -434,8 +439,12 @@ int main(int argc, char** argv)
     skybox.loadCubemap(facesName);
     skybox.setupSkybox(50.0f);
 
-    bunnyShader.use();
-    bunnyShader.setInt("skybox", 0);
+    ballShader.use();
+    ballShader.setInt("skybox", 0);
+
+    boxShader.use();
+    boxShader.setInt("diffuseMap", 0);
+    boxShader.setInt("normalMap", 1);
 
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
@@ -495,7 +504,7 @@ int main(int argc, char** argv)
 
         // render skybox
         glm::mat4 view = glm::mat4(glm::mat3(camera.getViewMatrix()));
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
         skybox.renderSkybox(skyboxShader, view, projection);
 
         glfwSwapBuffers(window);
