@@ -13,10 +13,6 @@
 #include <Kapsule/Shader.h>
 #include <Kapsule/Mesh.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image.h>
-#include <stb_image_write.h>
 
 namespace Kapsule {
 	using namespace std;
@@ -110,7 +106,6 @@ namespace Kapsule {
 			mat->GetTexture(type, i ,&str);
 			bool skip = false;
 
-
 			Texture texture;
 			texture.textureID = TextureFromFile(str.C_Str(), this->directory);
 			texture.type = typeName;
@@ -138,19 +133,35 @@ namespace Kapsule {
 
 			// normal
 			if (mesh->HasNormals()) {
+				//cerr << "has normal! " << directory << "\n";
 				vector.x = mesh->mNormals[i].x;
 				vector.y = mesh->mNormals[i].y;
 				vector.z = mesh->mNormals[i].z;
 				vertex.normal = vector;
+			} else {
+				//cerr << "no normal! " << directory << "\n";
 			}
 
 			// texture coord
 			if (mesh->mTextureCoords[0]) {
 				glm::vec2 vec;
-
+				// texture coord
 				vec.x = mesh->mTextureCoords[0][i].x;
 				vec.y = mesh->mTextureCoords[0][i].y;
 				vertex.texCoords = vec;
+
+				glm::vec3 vec3vector;
+				// tangent
+				vec3vector.x = mesh->mTangents[i].x;
+				vec3vector.y = mesh->mTangents[i].y;
+				vec3vector.z = mesh->mTangents[i].z;
+				vertex.tangent = vec3vector;
+
+				// bitangent
+				vec3vector.x = mesh->mBitangents[i].x;
+				vec3vector.y = mesh->mBitangents[i].y;
+				vec3vector.z = mesh->mBitangents[i].z;
+				vertex.bitangent = vec3vector;
 			} else {
 				vertex.texCoords = glm::vec2(0.0f, 0.0f);
 			}
@@ -166,10 +177,15 @@ namespace Kapsule {
 
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+		// diffuse map
 		vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse_texture");
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		// specular map
 		vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular_texture");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+		// normal map
+		vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "normal_texture");
+		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 		return Mesh(vertices, indices, textures);
 	}
 
@@ -188,7 +204,7 @@ namespace Kapsule {
 	void Model::loadModel(string const& path)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals);
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			cerr << "[ERROR] Assimp error: " << importer.GetErrorString() << "\n";
 			return;
@@ -197,4 +213,5 @@ namespace Kapsule {
 		processNode(scene->mRootNode, scene);
 	}
 }
+
 #endif // !__MODEL_H__

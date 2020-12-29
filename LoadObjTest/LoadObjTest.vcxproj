@@ -151,6 +151,7 @@
     <ClInclude Include="..\include\Kapsule\Mesh.h" />
     <ClInclude Include="..\include\Kapsule\Model.h" />
     <ClInclude Include="..\include\Kapsule\Shader.h" />
+    <ClInclude Include="..\include\Kapsule\Skybox.h" />
     <ClInclude Include="..\include\Kapsule\Snapshot.h" />
     <ClInclude Include="..\include\Kapsule\Utility.h" />
     <ClInclude Include="..\include\Kapsule\VertexArray.h" />

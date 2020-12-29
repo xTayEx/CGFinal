@@ -1,6 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image.h>
+#include <stb_image_write.h>
+
 #include <Kapsule/Buffers.h>
 #include <Kapsule/VertexArray.h>
 #include <Kapsule/Shader.h>
@@ -11,6 +16,7 @@
 #include <Kapsule/LayerModel.h>
 #include <Kapsule/Snapshot.h>
 #include <Kapsule/Video.h>
+#include <Kapsule/Skybox.h>
 
 #include <string>
 #include <iostream>
@@ -19,8 +25,8 @@
 
 const int WIDTH = 1280;
 const int HEIGHT = 720;
-const GLuint SHADOW_WIDTH = 1024;
-const GLuint SHADOW_HEIGHT = 1024;
+const GLuint SHADOW_WIDTH = 2048;
+const GLuint SHADOW_HEIGHT = 2048;
 float theta = 0.0f;
 float deltaTime = 0.0f;
 const double blockSize = 0.125;
@@ -30,7 +36,7 @@ int frameCnt = 0;
 float bodyRotationAngle = 0.0f;
 float armRotationAngle = 0.0f;
 float movement = 0.0f; 
-glm::vec3 lightPos(1.0f, 5.0f, 0.0f);
+glm::vec3 lightPos(1.0f, 3.0f, 1.0f);
 
 bool mouseFirst = true;
 bool cameraCanMove = true;
@@ -81,9 +87,42 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos)
     camera.processMouse(xoffset, yoffset);
 }
 
+// for shadow map debug
+unsigned int quadVAO = 0;
+unsigned int quadVBO;
+void renderQuad()
+{
+    if (quadVAO == 0) {
+        float quadVertices[] = {
+            // positions        // texture Coords
+            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+        };
+        // setup plane VAO
+        glGenVertexArrays(1, &quadVAO);
+        glGenBuffers(1, &quadVBO);
+        glBindVertexArray(quadVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    }
+    glBindVertexArray(quadVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glBindVertexArray(0);
+}
+
+
 void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Shader* shadowShader)
 {
     Model* plane = models[0];
+    Model* grassBlock = models[1];
+    Model* bunny = models[2];
+    Model* monkey = models[3];
 
     LayerModel* body = layerModels[0];
     LayerModel* head = layerModels[1];
@@ -96,8 +135,14 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     
     shadowShader->use();
 
-    for (int i = -10; i < 10; i++) {
-        for (int j = -10; j < 10; j++) {
+    glm::mat4 blockModel(1.0f);
+    blockModel = glm::translate(blockModel, glm::vec3(-2.0f, 1.0f, 0.0f));
+    blockModel = glm::scale(blockModel, glm::vec3(20.0f, 20.0f, 20.0f));
+    shadowShader->setMat4("model", blockModel);
+    grassBlock->draw(*shadowShader);
+
+    for (int i = -5; i < 5; i++) {
+        for (int j = -5; j < 5; j++) {
             glm::mat4 model(1.0f);
             model = glm::translate(model, glm::vec3(i * 2.0f, -0.5f, j * 2.0f));
             model = glm::scale(model, glm::vec3(16.0f, 16.0f, 16.0f));
@@ -110,21 +155,37 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     armRotationAngle = 1.5 * glfwGetTime();
     movement = 2.0 * sin(glfwGetTime());
     
-    body->setPositionMatrix(glm::vec3(0.0f, 1.2f, movement));
+    body->setPositionMatrix(glm::vec3(0.0f, 0.7f, movement));
     rightUpperArm->setRotationMatrix(armRotationAngle, glm::vec3(1.0f, 0.0f, 0.0f));
     rightLowerArm->setRotationMatrix(armRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     leftUpperArm->setRotationMatrix(armRotationAngle, glm::vec3(1.0f, 0.0f, 0.0f));
     leftLowerArm->setRotationMatrix(armRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     body->draw(*shadowShader);
+
+    glm::mat4 bunnyModel(1.0f);
+    bunnyModel = glm::translate(bunnyModel, glm::vec3(2.0f, 0.3f, 2.0f));
+    bunnyModel = glm::scale(bunnyModel, glm::vec3(0.3f, 0.3f, 0.3f));
+    shadowShader->setMat4("model", bunnyModel);
+    bunny->draw(*shadowShader);
+
+    glm::mat4 monkeyModel(1.0f);
+    monkeyModel = glm::translate(monkeyModel, glm::vec3(2.0f, 0.3f, 4.0f));
+    monkeyModel = glm::scale(monkeyModel, glm::vec3(0.3f, 0.3f, 0.3f));
+    shadowShader->setMat4("model", monkeyModel);
+    monkey->draw(*shadowShader);
 }
 
 void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<Shader*> shaders)
 {
     Shader* envShader = shaders[0];
     Shader* robotShader = shaders[1];
+    Shader* bunnyShader = shaders[2];
     //Shader* shadowShader = shaders[2];
 
     Model* plane = models[0];
+    Model* grassBlock = models[1];
+    Model* bunny = models[2];
+    Model* monkey = models[3];
 
     LayerModel* body = layerModels[0];
     LayerModel* head = layerModels[1];
@@ -155,8 +216,8 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
     envShader->setMat4("projection", projection);
     envShader->setMat4("view", view);
 
-    for (int i = -10; i < 10; i++) {
-        for (int j = -10; j < 10; j++) {
+    for (int i = -5; i < 5; i++) {
+        for (int j = -5; j < 5; j++) {
             glm::mat4 model(1.0f);
             model = glm::translate(model, glm::vec3(i * 2.0f, -0.5f, j * 2.0f));
             model = glm::scale(model, glm::vec3(16.0f, 16.0f, 16.0f));
@@ -182,12 +243,39 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
     robotShader->setMat4("projection", projection);
     robotShader->setMat4("view", view);
 
-    body->setPositionMatrix(glm::vec3(0.0f, 1.2f, movement));
+    body->setPositionMatrix(glm::vec3(0.0f, 0.7f, movement));
     rightUpperArm->setRotationMatrix(armRotationAngle, glm::vec3(1.0f, 0.0f, 0.0f));
     rightLowerArm->setRotationMatrix(armRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     leftUpperArm->setRotationMatrix(armRotationAngle, glm::vec3(1.0f, 0.0f, 0.0f));
     leftLowerArm->setRotationMatrix(armRotationAngle, glm::vec3(0.0f, 1.0f, 0.0f));
     body->draw(*robotShader);
+
+    // draw grass block
+    glm::mat4 blockModel(1.0f);
+    blockModel = glm::translate(blockModel, glm::vec3(-2.0f, 1.0f, 0.0f));
+    blockModel = glm::scale(blockModel, glm::vec3(20.0f, 20.0f, 20.0f));
+    robotShader->setMat4("model", blockModel);
+    grassBlock->draw(*robotShader);
+
+    bunnyShader->use();
+    bunnyShader->setInt("reflectSwitch", 0);
+    glm::mat4 bunnyModel(1.0f);
+    bunnyModel = glm::translate(bunnyModel, glm::vec3(2.0f, 0.3f, 2.0f));
+    bunnyModel = glm::scale(bunnyModel, glm::vec3(0.3f, 0.3f, 0.3f));
+    bunnyShader->setMat4("model", bunnyModel);
+    bunnyShader->setMat4("projection", projection);
+    bunnyShader->setMat4("view", view);
+    bunnyShader->setVec3("viewPos", camera.eye);
+    bunnyShader->setVec3("lightPos", lightPos);
+    bunny->draw(*bunnyShader);
+
+    glm::mat4 monkeyModel(1.0f);
+    bunnyShader->setInt("reflectSwitch", 1);
+    monkeyModel = glm::translate(monkeyModel, glm::vec3(2.0f, 0.3f, 4.0f));
+    monkeyModel = glm::scale(monkeyModel, glm::vec3(0.3f, 0.3f, 0.3f));
+    bunnyShader->setMat4("model", monkeyModel);
+    monkey->draw(*bunnyShader);
+
     
     //shadowShader->use();
     //body->drawShadow(*shadowShader, lightPos, view, projection, glm::mat4(1.0f));
@@ -224,15 +312,23 @@ int main(int argc, char** argv)
     }
 
     glEnable(GL_MULTISAMPLE);
+    //stbi_set_flip_vertically_on_load(true);
 
     Shader envShader("shader/env_vshader.glsl", "shader/env_fshader.glsl");
     Shader robotShader("shader/robot_vshader.glsl", "shader/robot_fshader.glsl");
     //Shader shadowShader("shader/shadow_vshader.glsl", "shader/shadow_fshader.glsl");
     Shader depthShader("shader/depth_vshader.glsl", "shader/depth_fshader.glsl");
+    Shader debugShader("shader/debug_vshader.glsl", "shader/debug_fshader.glsl");
+    Shader skyboxShader("shader/skybox_vshader.glsl", "shader/skybox_fshader.glsl");
+    Shader bunnyShader("shader/bunny_vshader.glsl", "shader/bunny_fshader.glsl");
+
     Model plane((char*)"model/Plane/Plane.obj");
+    Model grassBlock((char*)"model/dirt/grassBlock.obj");
+    Model ball((char*)"model/ball/Ball.obj");
+    Model monkey((char*)"model/monkey/Monkey.obj");
     LayerModel body = LayerModel();
     body.setNodeModel(Model((char*)"model/man/Body/Body.obj"))
-        .setPositionMatrix(glm::vec3(0.0f, 1.2f, 0.0f))
+        .setPositionMatrix(glm::vec3(0.0f, 0.7f, 0.0f))
         .setScaleMatrix(glm::vec3(12.0f, 15.0f, 12.0f));
 
 
@@ -270,7 +366,6 @@ int main(int argc, char** argv)
                                     .setPositionMatrix(glm::vec3(0.02f, -0.05f, 0.0f))
                                     .setScaleMatrix(glm::vec3(0.3f, 1.0f, 0.3f));
 
-    stbi_set_flip_vertically_on_load(true);
     glEnable(GL_DEPTH_TEST);
     
     // generate depth framebuffer
@@ -282,15 +377,17 @@ int main(int argc, char** argv)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     //
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     //Kapsule::openVideo(1280, 720, 300);
     vector<LayerModel*> LayerModels;
     LayerModels.push_back(&body);
@@ -304,10 +401,14 @@ int main(int argc, char** argv)
 
     vector<Model*> Models;
     Models.push_back(&plane);
+    Models.push_back(&grassBlock);
+    Models.push_back(&ball);
+    Models.push_back(&monkey);
 
     vector<Shader*> Shaders;
     Shaders.emplace_back(&envShader);
     Shaders.emplace_back(&robotShader);
+    Shaders.emplace_back(&bunnyShader);
     //Shaders.emplace_back(&shadowShader);
 
     envShader.use();
@@ -318,6 +419,24 @@ int main(int argc, char** argv)
     robotShader.setInt("material.diffuse", 0);
     robotShader.setInt("shadowMap", 1);
 
+    // set up skybox
+    skyboxShader.use();
+    skyboxShader.setInt("skybox", 0);
+    Kapsule::Skybox skybox;
+    vector<string> facesName = {
+        "skybox/right.jpg",
+        "skybox/left.jpg",
+        "skybox/top.jpg",
+        "skybox/bottom.jpg",
+        "skybox/front.jpg",
+        "skybox/back.jpg",
+    };
+    skybox.loadCubemap(facesName);
+    skybox.setupSkybox(50.0f);
+
+    bunnyShader.use();
+    bunnyShader.setInt("skybox", 0);
+
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.1f, 0.1f, 0.1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -326,8 +445,8 @@ int main(int argc, char** argv)
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
         // nearPlane and farPlane may be modified.
-        float nearPlane = 1.0f;
-        float farPlane = 7.5f;
+        float nearPlane = -15.0f;
+        float farPlane = 15.0f;
         lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, nearPlane, farPlane);
         lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         lightSpaceMatrix = lightProjection * lightView;
@@ -351,6 +470,10 @@ int main(int argc, char** argv)
         lastTime = curTime;
         processKeyboardInput(window);
 
+        envShader.use();
+        envShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        robotShader.use();
+        robotShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(LayerModels, Models, Shaders);
@@ -360,6 +483,21 @@ int main(int argc, char** argv)
         //} else {
         //    Kapsule::saveAsVideo();
         //}
+
+        // for shadow map debug
+        //debugShader.use();
+        //debugShader.setFloat("near_plane", nearPlane);
+        //debugShader.setFloat("far_plane", farPlane);
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, depthMap);
+        //renderQuad();
+        // end
+
+        // render skybox
+        glm::mat4 view = glm::mat4(glm::mat3(camera.getViewMatrix()));
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        skybox.renderSkybox(skyboxShader, view, projection);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

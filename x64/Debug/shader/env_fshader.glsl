@@ -26,11 +26,25 @@ uniform Light light;
 
 float calcShadow(vec4 fragPosLightSpace)
 {
-    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.z;
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
     float closestDepth = texture(shadowMap, projCoords.xy).r;
     float currentDepth = projCoords.z;
-    float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+    // float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+    vec3 normal = normalize(Normal);
+    vec3 lightDir = normalize(light.position - FragPos);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+    for (int x = -2; x <= 2; x++) {
+        for (int y = -2; y <= 2; y++) {
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+    shadow /= 25.0;
+    if (projCoords.z > 1.0)
+        shadow = 0.0;
     return shadow;
 }
 
@@ -40,7 +54,7 @@ void main()
     // ambient
     vec3 ambient = light.ambient * color;
   	
-    // diffuse 
+    // diffuse
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(light.position - FragPos);
     vec3 viewDir = normalize(viewPos - FragPos);

@@ -53,5 +53,8 @@
     <ClInclude Include="..\include\Kapsule\Video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\Kapsule\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

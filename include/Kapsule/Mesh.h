@@ -16,6 +16,8 @@ namespace Kapsule {
         glm::vec3 position;
         glm::vec3 normal;
         glm::vec2 texCoords;
+        glm::vec3 tangent;
+        glm::vec3 bitangent;
     };
 
     struct Texture {
@@ -33,8 +35,8 @@ namespace Kapsule {
             vector<unsigned int> indices,
             vector<Texture> textures);
         void draw(const Shader& shader);
-		void drawShadow(const Shader& shadowShader, 
-						glm::vec3 lightPos,
+        void drawShadow(const Shader& shadowShader, 
+                        glm::vec3 lightPos,
                         glm::mat4 shadowViewMatrix,
                         glm::mat4 projMatrix,
                         glm::mat4 modelMatrix);
@@ -75,6 +77,10 @@ namespace Kapsule {
         vao.setAttributePointer(vbo, 1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
         // texture coord
         vao.setAttributePointer(vbo, 2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
+        // tangent
+        vao.setAttributePointer(vbo, 3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+        // bitangent
+        vao.setAttributePointer(vbo, 4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
         vao.unbind();
         //DEBUG
         //DEBUGX(textures.size())
@@ -85,7 +91,7 @@ namespace Kapsule {
         unsigned int diffuseNr  = 1;
         unsigned int specularNr = 1;
         unsigned int normalNr   = 1;
-        unsigned int heightNr   = 1;
+        //unsigned int heightNr   = 1;
         for (unsigned int i = 0; i < textures.size(); i++) {
             glActiveTexture(GL_TEXTURE0 + i);
             string number;
@@ -94,6 +100,8 @@ namespace Kapsule {
                 number = to_string(diffuseNr++);
             } else if (name == "specular_texture") {
                 number = to_string(specularNr++);
+            } else if (name == "normal_texture") {
+                number = to_string(normalNr++);
             }
             glUniform1i(glGetUniformLocation(shader.ShaderID, (name + number).c_str()), i);
             glBindTexture(GL_TEXTURE_2D, textures[i].textureID);
