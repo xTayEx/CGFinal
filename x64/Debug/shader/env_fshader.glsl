@@ -45,7 +45,7 @@ float calcShadow(vec4 fragPosLightSpace)
     shadow /= 25.0;
     if (projCoords.z > 1.0)
         shadow = 0.0;
-    return shadow;
+    return closestDepth;
 }
 
 void main()
@@ -70,5 +70,5 @@ void main()
     float shadow = calcShadow(FragPosLightSpace);
 
     vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular));
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(vec3(shadow), 1.0);
 }
