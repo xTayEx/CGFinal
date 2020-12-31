@@ -36,7 +36,7 @@ int frameCnt = 0;
 float bodyRotationAngle = 0.0f;
 float armRotationAngle = 0.0f;
 float movement = 0.0f; 
-glm::vec3 lightPos(1.0f, 3.0f, -1.0f);
+glm::vec3 lightPos(1.0f, 7.0f, -1.0f);
 
 bool mouseFirst = true;
 bool cameraCanMove = true;
@@ -173,6 +173,19 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     boxModel = glm::scale(boxModel, glm::vec3(1.0f, 1.0f, 1.0f));
     shadowShader->setMat4("model", boxModel);
     woodenBox->draw(*shadowShader);
+
+    boxModel = glm::mat4(1.0f);
+    boxModel = glm::translate(boxModel, glm::vec3(2.0f, 0.0f, 5.3f));
+    boxModel = glm::rotate(boxModel, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    shadowShader->setMat4("model", boxModel);
+    woodenBox->draw(*shadowShader);
+
+    boxModel = glm::mat4(1.0f);
+    boxModel = glm::translate(boxModel, glm::vec3(3.3f, 0.0f, 4.8f));
+    boxModel = glm::rotate(boxModel, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    shadowShader->setMat4("model", boxModel);
+    woodenBox->draw(*shadowShader);
+
 }
 
 void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<Shader*> shaders)
@@ -271,13 +284,24 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
 
     glm::mat4 boxModel(1.0f);
     boxModel = glm::translate(boxModel, glm::vec3(2.0f, 0.0f, 4.0f));
-    boxModel = glm::scale(boxModel, glm::vec3(1.0f, 1.0f, 1.0f));
     boxShader->use();
     boxShader->setMat4("projection", projection);
     boxShader->setMat4("view", view);
     boxShader->setMat4("model", boxModel);
     boxShader->setVec3("lightPos", lightPos);
     boxShader->setVec3("viewPos", camera.eye);
+    woodenBox->draw(*boxShader);
+
+    boxModel = glm::mat4(1.0f);
+    boxModel = glm::translate(boxModel, glm::vec3(2.0f, 0.0f, 5.3f));
+    boxModel = glm::rotate(boxModel, glm::radians(30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    boxShader->setMat4("model", boxModel);
+    woodenBox->draw(*boxShader);
+
+    boxModel = glm::mat4(1.0f);
+    boxModel = glm::translate(boxModel, glm::vec3(3.3f, 0.0f, 4.8f));
+    boxModel = glm::rotate(boxModel, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    boxShader->setMat4("model", boxModel);
     woodenBox->draw(*boxShader);
 
     //shadowShader->use();

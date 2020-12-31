@@ -33,8 +33,10 @@ float calcShadow(vec4 fragPosLightSpace)
     // float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(light.position - FragPos);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    // float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
     float shadow = 0.0;
+    float bias = 0.001;
+    shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0; 
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for (int x = -2; x <= 2; x++) {
         for (int y = -2; y <= 2; y++) {
@@ -45,7 +47,7 @@ float calcShadow(vec4 fragPosLightSpace)
     shadow /= 25.0;
     if (projCoords.z > 1.0)
         shadow = 0.0;
-    return closestDepth;
+    return shadow;
 }
 
 void main()
@@ -70,5 +72,5 @@ void main()
     float shadow = calcShadow(FragPosLightSpace);
 
     vec3 result = (ambient + (1.0 - shadow) * (diffuse + specular));
-    FragColor = vec4(vec3(shadow), 1.0);
+    FragColor = vec4(result, 1.0);
 }

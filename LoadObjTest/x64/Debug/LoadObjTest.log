@@ -15,9 +15,8 @@ D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(86,27): war
 D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(154,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(155,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(156,20): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(212,51): warning C4305: 'argument': truncation from 'float' to 'bool'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(239,55): warning C4305: 'argument': truncation from 'float' to 'bool'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(240,77): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(477,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  LINK : D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\x64\Debug\LoadObjTest.exe not found or not built by the last incremental link; performing full link
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(225,51): warning C4305: 'argument': truncation from 'float' to 'bool'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(252,55): warning C4305: 'argument': truncation from 'float' to 'bool'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(253,77): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(501,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   LoadObjTest.vcxproj -> D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\x64\Debug\LoadObjTest.exe
