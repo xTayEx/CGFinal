@@ -123,6 +123,7 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     Model* grassBlock = models[1];
     Model* ball = models[2];
     Model* woodenBox = models[3];
+    Model* tree = models[4];
 
     LayerModel* body = layerModels[0];
     LayerModel* head = layerModels[1];
@@ -186,6 +187,10 @@ void renderShadowMap(vector<LayerModel*> layerModels, vector<Model*> models, Sha
     shadowShader->setMat4("model", boxModel);
     woodenBox->draw(*shadowShader);
 
+    glm::mat4 treeModel(1.0f);
+    treeModel = glm::translate(treeModel, glm::vec3(-5.0f, 1.5f, 0.0f));
+    shadowShader->setMat4("model", treeModel);
+    tree->draw(*shadowShader);
 }
 
 void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<Shader*> shaders)
@@ -199,6 +204,7 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
     Model* grassBlock = models[1];
     Model* ball = models[2];
     Model* woodenBox = models[3];
+    Model* tree = models[4];
 
     LayerModel* body = layerModels[0];
     LayerModel* head = layerModels[1];
@@ -269,6 +275,13 @@ void renderScene(vector<LayerModel*> layerModels, vector<Model*> models, vector<
     blockModel = glm::scale(blockModel, glm::vec3(20.0f, 20.0f, 20.0f));
     robotShader->setMat4("model", blockModel);
     grassBlock->draw(*robotShader);
+
+    robotShader->setFloat("material.shininess", 0.25f * 128.0f);
+    robotShader->setVec3("material.specular", 0.45, 0.55f, 0.45f);
+    glm::mat4 treeModel(1.0f);
+    treeModel = glm::translate(treeModel, glm::vec3(-5.0f, 1.5f, 0.0f));
+    robotShader->setMat4("model", treeModel);
+    tree->draw(*robotShader);
 
     ballShader->use();
     ballShader->setInt("reflectSwitch", 1);
@@ -354,6 +367,7 @@ int main(int argc, char** argv)
     Model grassBlock((char*)"model/dirt/grassBlock.obj");
     Model ball((char*)"model/ball/Ball.obj");
     Model woodenBox((char*)"model/woodenBox/Wooden_stuff.obj");
+    Model tree((char*)"model/tree/tree.obj");
     LayerModel body = LayerModel();
     body.setNodeModel(Model((char*)"model/man/Body/Body.obj"))
         .setPositionMatrix(glm::vec3(0.0f, 0.7f, 0.0f))
@@ -432,6 +446,7 @@ int main(int argc, char** argv)
     Models.push_back(&grassBlock);
     Models.push_back(&ball);
     Models.push_back(&woodenBox);
+    Models.push_back(&tree);
 
     vector<Shader*> Shaders;
     Shaders.emplace_back(&envShader);
