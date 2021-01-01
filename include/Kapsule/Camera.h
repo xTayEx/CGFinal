@@ -11,7 +11,7 @@
 namespace Kapsule {
 	using namespace std;
 	// A fps camera
-	enum Movement { FORWARD, LEFT, RIGHT, BACKWARD };
+	enum Movement { FORWARD, LEFT, RIGHT, BACKWARD, UP, DOWN };
 	class Camera {
 	public:
 		glm::vec3 eye;
@@ -32,7 +32,7 @@ namespace Kapsule {
 			   float pitch = 0.0f,
 			   float moveSpeed = 6.0f)
 		{
-			front = glm::vec3(0.0f, 0.0f, -1.0f);
+			front = glm::vec3(0.0f, 0.0f, 1.0f);
 			this->eye = eye;
 			this->up = up;
 			this->yaw = yaw;
@@ -66,6 +66,12 @@ namespace Kapsule {
 			case Kapsule::BACKWARD:
 				eye -= frontDir * deltaDistance;
 				break;
+			case Kapsule::UP:
+				eye += up * deltaDistance;
+				break;
+			case Kapsule::DOWN:
+				eye -= up * deltaDistance;
+				break;
 			default:
 				break;
 			}
@@ -75,13 +81,18 @@ namespace Kapsule {
 		{
 			x *= sensitivity;
 			y *= sensitivity;
-			this->yaw += x * 2;
+			this->yaw -= x * 2;
 			this->pitch += y;
 
 			this->pitch = min(89.0f, this->pitch);
-			this->pitch = max(-89.0f, this->pitch);
+			this->pitch = max(-30.0f, this->pitch);
 
 			updateVectors();
+		}
+
+		void setEyePosition(glm::vec3 pos)
+		{
+			eye = pos;
 		}
 
 	private:
@@ -90,7 +101,7 @@ namespace Kapsule {
 			glm::vec3 newFront;
 			newFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 			newFront.y = sin(glm::radians(pitch));
-			newFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+			newFront.z = -sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 			this->front = newFront;
 
 			this->right = glm::normalize(glm::cross(this->front, glm::vec3(0.0f, 1.0f, 0.0f)));

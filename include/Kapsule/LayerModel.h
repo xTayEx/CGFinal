@@ -21,10 +21,12 @@ namespace Kapsule {
             positionMatrix = glm::mat4(1.0f);
             scaleMatrix = glm::mat4(1.0f);
             rotationMatrix = glm::mat4(1.0f);
+            position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
         }
 
         void draw(Shader& shader)
         {
+            position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
             __render(shader, this, glm::mat4(1.0f));
         }
 
@@ -76,17 +78,25 @@ namespace Kapsule {
             __drawShadow(shadowShader, this, lightPos, viewMatrix, projMatrix, modelMatrix);
         }
         
+        glm::vec3 getPosition()
+        {
+            return glm::vec3(position.x, position.y, position.z);
+        }
+        
     private:
         vector<LayerModel*> sons;
         Kapsule::Model nodeModel;
         glm::mat4 scaleMatrix;
         glm::mat4 positionMatrix;
         glm::mat4 rotationMatrix;
+        glm::vec4 position;
 
         void __render(Shader& shader, LayerModel* curNode, glm::mat4 modelMatrix)
         {
             modelMatrix *= curNode->positionMatrix * curNode->scaleMatrix * curNode->rotationMatrix;
             shader.setMat4("model", modelMatrix);
+            curNode->position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            curNode->position = modelMatrix * curNode->position;
             curNode->nodeModel.draw(shader);
             size_t siz = curNode->sons.size();
             for (size_t i = 0; i < siz; i++) {

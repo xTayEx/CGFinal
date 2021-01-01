@@ -6,19 +6,21 @@ D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\include\Kapsule\Mesh.h(136,72): 
 D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\include\Kapsule\Model.h(122,53): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
 D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\include\Kapsule\Camera.h(42,1): warning C4305: '=': truncation from 'double' to 'float'
 D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\include\Kapsule\Skybox.h(40,1): warning C4267: 'argument': conversion from 'size_t' to 'GLenum', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(79,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(80,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(84,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(85,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(86,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(86,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(155,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(156,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(157,20): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(231,51): warning C4305: 'argument': truncation from 'float' to 'bool'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(258,55): warning C4305: 'argument': truncation from 'float' to 'bool'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(259,77): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(279,63): warning C4305: 'argument': truncation from 'float' to 'bool'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(280,65): warning C4305: 'argument': truncation from 'double' to 'float'
-D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(516,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(124,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(125,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(129,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(130,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(131,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(131,27): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(143,23): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(334,21): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(336,41): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(452,51): warning C4305: 'argument': truncation from 'float' to 'bool'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(479,55): warning C4305: 'argument': truncation from 'float' to 'bool'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(480,77): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(499,21): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(501,41): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(532,63): warning C4305: 'argument': truncation from 'float' to 'bool'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(533,65): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\LoadObjTest\main.cpp(796,30): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   LoadObjTest.vcxproj -> D:\CS_\ComputerGraphics\LoadObjTest\LoadObjTest\x64\Debug\LoadObjTest.exe
